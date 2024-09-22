@@ -22,15 +22,7 @@ public class Omar extends LinearOpMode {
     public void runOpMode() {
       hookL = hardwareMap.get(Servo.class, "hookL");
       hookR = hardwareMap.get(Servo.class, "hookR");
-    /*  backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
-      backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
-      frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-      frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-      wrist = hardwareMap.get(DcMotor.class, "wrist");
-      leftShoulder = hardwareMap.get(DcMotor.class, "leftShoulder");
-      rightShoulder = hardwareMap.get(DcMotor.class, "rightShoulder");
-      imu = hardwareMap.get(BNO055IMU.class, "imu");
-      */
+        
       // Put initialization blocks here
       waitForStart();
       // Put run blocks here
