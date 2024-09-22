@@ -60,6 +60,8 @@ public class OmarArcadeMode extends LinearOpMode {
     private DcMotor backleftDrive = null;
     private DcMotor frontrightDrive = null;
     private DcMotor backrightDrive = null;
+    Servo hookL;
+    Servo hookR;
     
 
 
