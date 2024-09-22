@@ -106,6 +106,25 @@ public class OmarArcadeMode extends LinearOpMode {
             backrightDrive.setPower(brpower);
             frontleftDrive.setPower(flpower);
             backleftDrive.setPower(blpower);
+          
+         if (gamepad1.y){
+              
+              hookL.setPosition(0);
+              
+          } 
+          
+          else if(gamepad1.x){
+              hookL.setPosition(0.7);
+              
+          }
+          
+          else if(gamepad1.a){
+              
+              hookL.setPosition(1);
+              
+          }
+
+         
             
             
             
