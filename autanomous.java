@@ -18,11 +18,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 
 @Autonomous (name = "OmarCompition")
@@ -32,13 +36,13 @@ public class OmarCompition extends LinearOpMode {
     DcMotor fr = null;
     DcMotor bl = null;
     DcMotor br = null;
-    double integral = 0;
+    double intergral = 0;
     double kp = 0.5;
     double ki = 0.5;
     double kd = 0.5;
     ElapsedTime elapsedTime = new ElapsedTime();
     double previous = 0;
-    
+    private BNO055IMU imu;
     
     
     @Override
@@ -65,6 +69,23 @@ public class OmarCompition extends LinearOpMode {
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
+     
+        
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        
+        BNO055IMU.Parameters paramsIMU = new BNO055IMU.Parameters(            
+            new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+                ));
+        
+                
+        paramsIMU.mode = BNO055IMU.SensorMode.IMU;
+        paramsIMU.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        imu.initialize(paramsIMU);
+        
+        YawPitchRollAngles robotOrientation;
+        robotOrientatation = imu.getRobotYawPitchRollAngles();
         waitForStart();
         
         move(1000, 1000, 0.2);
@@ -105,7 +126,8 @@ public class OmarCompition extends LinearOpMode {
          while (opModeIsActive() && (fl.isBusy() || fr.isBusy() || bl.isBusy() || br.isBusy())){
              idle();
          }
-         public double PIDController(double target,double current){
+     }
+    public double PIDController(double target,double current){
              double currentTime = elapsedTime.time();
              double proportionalError = target - current;
              intergral += proportionalError * currentTime;
@@ -114,14 +136,5 @@ public class OmarCompition extends LinearOpMode {
              elapsedTime.reset();
              return proportionalError * kp + integral * ki + derivative * kd;
          }
-     }
+
  }
-
-
-
-
-
-
-
-
-
