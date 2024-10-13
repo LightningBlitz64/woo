@@ -86,6 +86,7 @@ public class OmarCompition extends LinearOpMode {
         
         YawPitchRollAngles robotOrientation;
         robotOrientatation = imu.getRobotYawPitchRollAngles();
+        
         waitForStart();
         
         move(1000, 1000, 0.2);
@@ -123,8 +124,16 @@ public class OmarCompition extends LinearOpMode {
          bl.setPower(speed);
          br.setPower(speed);
          
-         while (opModeIsActive() && (fl.isBusy() || fr.isBusy() || bl.isBusy() || br.isBusy())){
-             idle();
+         while (opModeIsActive()){
+             double Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+             double Pitch = robotOrientation.getPitch(AngleUnit.DEGREES);
+             double Roll = robotOrientation.getRoll(AngleUnit.DEGREES);
+             
+             telemetry.addData("imu yaw: ", Yaw);
+             telemetry.addData("imu pitch: ", Pitch);
+             telemetry.addData("imu roll: ", Roll);
+             telemetry.update();
+             
          }
      }
     public double PIDController(double target,double current){
