@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 
@@ -31,6 +32,12 @@ public class OmarCompition extends LinearOpMode {
     DcMotor fr = null;
     DcMotor bl = null;
     DcMotor br = null;
+    double integral = 0;
+    double kp = 0.5;
+    double ki = 0.5;
+    double kd = 0.5
+    ElapsedTime elapsedTime = new ElapsedTime();
+    double previous = 0 
     
     @Override
     public void runOpMode() {
@@ -96,7 +103,13 @@ public class OmarCompition extends LinearOpMode {
          while (opModeIsActive() && (fl.isBusy() || fr.isBusy() || bl.isBusy() || br.isBusy())){
              idle();
          }
-         
+         public double PIDController(double target,double current){
+             double proportionalError = target - current;
+             intergral += proportionalError * elapsedTime.time();
+
+             elapsedTime.reset();
+             return proportionalError * kp + integral * ki;
+         }
      }
  }
 
