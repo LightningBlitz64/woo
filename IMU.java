@@ -30,6 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,8 +79,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  */
 @TeleOp(name = "Omar_imu", group = "Sensor")
 
-public class IMU_master extends LinearOpMode
-{
+public class IMU_master extends LinearOpMode{
+    DcMotor fl = null;
+    DcMotor fr = null;
+    DcMotor bl = null;
+    DcMotor br = null;
+    double intergral = 0;
+    double kp = 0.5;
+    double ki = 0.5;
+    double kd = 0.5;
+    ElapsedTime elapsedTime = new ElapsedTime();
+    double angleRadians = Math.toRadians(90);
     // The IMU sensor object
     IMU imu;
 
@@ -87,6 +98,16 @@ public class IMU_master extends LinearOpMode
     //----------------------------------------------------------------------------------------------
 
     @Override public void runOpMode() throws InterruptedException {
+            
+        fl  = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl  = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
+        
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        bl.setDirection(DcMotor.Direction.REVERSE);
+        fr.setDirection(DcMotor.Direction.FORWARD);
+        br.setDirection(DcMotor.Direction.FORWARD);
 
         // Retrieve and initialize the IMU.
         // This sample expects the IMU to be in a REV Hub and named "imu".
@@ -116,21 +137,26 @@ public class IMU_master extends LinearOpMode
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
+        waitForStart();
+        imu.resetYaw();
         // Loop and update the dashboard
-        while (!isStopRequested()) {
+         while (!isStopRequested()) {
+            
+            double power = PIDController(angleRadians, imu.getAngularOrientation().firstAngle);
+            frontLeftDrive.setPower(power);
+            backLeftDrive.setPower(power);
+            frontRightDrive.setPower(-power);
+            backRightDrive.setPower(-power);
 
             telemetry.addData("Hub orientation", "Logo=%s   USB=%s\n ", logoDirection, usbDirection);
 
-            // Check to see if heading reset is requested
-            if (gamepad1.y) {
-                telemetry.addData("Yaw", "Resetting\n");
-                imu.resetYaw();
-            } else {
-                telemetry.addData("Yaw", "Press Y (triangle) on Gamepad to reset\n");
-            }
+            // if (gamepad1.y) {
+            //     telemetry.addData("Yaw", "Resetting\n");
+            //     imu.resetYaw();
+            // } else {
+            //     telemetry.addData("Yaw", "Press Y (triangle) on Gamepad to reset\n");
+            // }
 
-            // Retrieve Rotational Angles and Velocities
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
@@ -142,5 +168,15 @@ public class IMU_master extends LinearOpMode
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             telemetry.update();
         }
+    }
+    
+    public double PIDController(double target, double current){
+        double currentTime = elapsedTime.time();
+        double proportionError = target - current;
+        integral += proportionError * currentTime;
+        double derivative = (current - previous) / (currentTime);
+        previous = current;
+        elapsedTime.reset();
+        return proportionError * kp + integral * ki + derivative * kd;
     }
 }
