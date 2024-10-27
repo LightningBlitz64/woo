@@ -81,6 +81,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class SensorIMUOrthogonal extends LinearOpMode
 {
     // The IMU sensor object
+    double intergral = 0;
+    double kp = 0.5;
+    double ki = 0.5;
+    double kd = 0.5;
+    ElapsedTime elapsedTime = new ElapsedTime();
+    double previous = 0;
     IMU imu;
 
     //----------------------------------------------------------------------------------------------
