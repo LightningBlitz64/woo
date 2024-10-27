@@ -145,5 +145,13 @@ public class OmarCompition extends LinearOpMode {
              elapsedTime.reset();
              return proportionalError * kp + integral * ki + derivative * kd;
          }
+    public double angleWrap(double radians) {
+        while (radians > Math.PI){
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+        return radians;
 
  }
