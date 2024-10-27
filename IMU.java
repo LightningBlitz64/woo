@@ -144,4 +144,12 @@ public class SensorIMUOrthogonal extends LinearOpMode
             telemetry.update();
         }
     }
+     public double PIDController(double target,double current){
+             double currentTime = elapsedTime.time();
+             double proportionalError = target - current;
+             intergral += proportionalError * currentTime;
+             double derivative = (current - previous) / (currentTime);
+             previous = current;
+             elapsedTime.reset();
+             return proportionalError * kp + integral * ki + derivative * kd;
 }
