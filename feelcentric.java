@@ -109,7 +109,7 @@ public class BRUH extends LinearOpMode {
         while (opModeIsActive()) {
         
            double drive_y = -gamepad1.left_stick_y;
-           double strafe_x = gamepad1.left_stick_x;
+           double strafe_x = gamepad1.left_stick_x * 1.1;
            double turn_rx = gamepad1.right_stick_x;
         
            if (gamepad1.options){
@@ -142,16 +142,16 @@ public class BRUH extends LinearOpMode {
             telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             telemetry.update();
+
+            denominator = Math.max(Math.abs(drive_y) + Math.abs(strafe_x) + Math.abs(turn_rx), 1);
             
-            drive =-gamepad1.left_stick_y;
-            strafe =gamepad1.left_stick_x;
-            turn =gamepad1.right_stick_x;
-            
-            frpower = drive - turn - strafe;
-            brpower = drive - turn + strafe;
-            flpower = drive + turn + strafe;
-            blpower = drive + turn - strafe;
-            
+            frpower = drive_y - turn_rx - strafe_x / denominator;
+            brpower = drive_y - turn_rx + strafe_x / denominator;
+            flpower = drive_y + turn_rx + strafe_x / denominator;
+            blpower = drive_y + turn_rx - strafe_x / denominator;
+         
+
+         
             double maxPower = Math.max(+-       Math.abs(frpower),Math.max(Math.abs(brpower),Math.max(Math.abs(flpower), Math.abs(blpower))));
             if(maxPower > 1){
                 frpower /= maxPower;
