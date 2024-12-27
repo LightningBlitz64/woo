@@ -60,9 +60,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "BRUH", group = "LinearOpMode")
+@TeleOp(name = "Team1", group = "LinearOpMode")
 
-public class BRUH extends LinearOpMode {
+public class Team1 extends LinearOpMode {
     private DcMotor frontleftDrive = null;
     private DcMotor backleftDrive = null;
     private DcMotor frontrightDrive = null;
@@ -109,7 +109,7 @@ public class BRUH extends LinearOpMode {
         while (opModeIsActive()) {
         
            double drive_y = -gamepad1.left_stick_y;
-           double strafe_x = gamepad1.left_stick_x * 1.1;
+           double strafe_x = gamepad1.left_stick_x ;
            double turn_rx = gamepad1.right_stick_x;
         
            if (gamepad1.options){
@@ -118,18 +118,13 @@ public class BRUH extends LinearOpMode {
             
            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
            
-           double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-           double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+           double rotX = strafe_x * Math.cos(-botHeading) - drive_y * Math.sin(-botHeading);
+           double rotY = strafe_x * Math.sin(-botHeading) + drive_y * Math.cos(-botHeading);
          
            telemetry.addData("Hub orientation", "Logo=%s   USB=%s\n ", logoDirection, usbDirection);
 
             // Check to see if heading reset is requested
-            if (gamepad1.y) {
-                telemetry.addData("Yaw", "Resetting\n");
-                imu.resetYaw();
-            } else {
-                telemetry.addData("Yaw", "Press Y (triangle) on Gamepad to reset\n");
-            }
+
 
             // Retrieve Rotational Angles and Velocities
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -143,16 +138,16 @@ public class BRUH extends LinearOpMode {
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             telemetry.update();
 
-            denominator = Math.max(Math.abs(drive_y) + Math.abs(strafe_x) + Math.abs(turn_rx), 1);
+            double = denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn_rx), 1);
             
-            frpower = drive_y - turn_rx - strafe_x / denominator;
-            brpower = drive_y - turn_rx + strafe_x / denominator;
-            flpower = drive_y + turn_rx + strafe_x / denominator;
-            blpower = drive_y + turn_rx - strafe_x / denominator;
+            frpower = (rotY - rotX - turn_rx) / denominator;
+            brpower = (rotY + rotX - turn_rx) / denominator;
+            flpower = (rotY + rotX + turn_rx) / denominator;
+            blpower = (rotY - rotX + turn_rx) / denominator;
          
 
          
-            double maxPower = Math.max(+-       Math.abs(frpower),Math.max(Math.abs(brpower),Math.max(Math.abs(flpower), Math.abs(blpower))));
+            double maxPower = Math.max(+-Math.abs(frpower),Math.max(Math.abs(brpower),Math.max(Math.abs(flpower), Math.abs(blpower))));
             if(maxPower > 1){
                 frpower /= maxPower;
                 brpower /= maxPower;
