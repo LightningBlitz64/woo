@@ -16,13 +16,9 @@ public class MyClass {
   public static void main(String args[]) {
     Scanner input = new Scanner(System.in);
     
-    double num1 = input.nextDouble();
+    String equation = input.nextLine();
     
-    String op = input.next();
-    
-    double num2 = input.nextDouble();
-    
-    System.out.println(Calc(num1, op, num2));
+    System.out.println(Calc(equation));
     
     
     
@@ -30,7 +26,16 @@ public class MyClass {
    
       
   }
-  public static double Calc(double num1, String op, double num2){
+  public static double Calc(String equation){
+      Scanner scan = new Scanner(equation);
+      
+      double num1 = scan.nextDouble();
+      
+      String op = scan.next();
+      
+      double num2 = scan.nextDouble();
+      
+      
       if (op.equals("+")){
         double answer = num1 + num2;
         return answer;
